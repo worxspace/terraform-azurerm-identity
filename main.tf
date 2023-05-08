@@ -8,19 +8,19 @@
  */
 
 module "landingzone" {
-  source = "github.com/worxspace/tfm-azure-landingzone?ref=0.0.1"
+  source = "github.com/worxspace/tfm-azure-landingzone?ref=0.0.2"
 
-  tenant-name        = var.tenant-name
-  tenant-short-name  = var.tenant-short-name
+  project-name       = var.project-name
+  resource-prefixes  = var.resource-prefixes
+  resource-suffixes  = var.resource-suffixes
   location           = var.location
-  name               = "identity"
   hub-vnet           = var.hub-vnet
   vnet-address-space = var.address-space
-  firewall-ip         = var.firewall-ip
+  firewall-ip        = var.firewall-ip
 }
 
 module "identity-subnet" {
-  source = "github.com/worxspace/tfm-azure-subnet?ref=0.0.1"
+  source = "github.com/worxspace/tfm-azure-subnet?ref=0.0.2"
 
   name                = "identity"
   tenant-short-name   = var.tenant-short-name
@@ -41,9 +41,4 @@ resource "azurerm_virtual_network_dns_servers" "hub-dns" {
 
   virtual_network_id = var.hub-vnet.id
   dns_servers        = module.adds-vm[*].ip-address
-}
-
-moved {
-  from = azurerm_subnet.identity-Subnet
-  to   = module.identity-subnet.azurerm_subnet.Subnet
 }

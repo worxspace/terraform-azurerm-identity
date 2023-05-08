@@ -1,7 +1,8 @@
 resource "azurecaf_name" "adsync-resource-group-name" {
   resource_type = "azurerm_resource_group"
-  name          = "adsync"
-  prefixes      = [var.tenant-short-name]
+  name          = "${var.project-name}-adsync"
+  prefixes      = var.resource-prefixes
+  suffixes      = var.resource-suffixes
 }
 
 resource "azurerm_resource_group" "adsync-resource-group" {
@@ -12,10 +13,10 @@ resource "azurerm_resource_group" "adsync-resource-group" {
 resource "azurecaf_name" "vm-ade-key-adsync" {
   count = var.adsync == null ? 0 : 1
 
-  name          = "adsync"
   resource_type = "azurerm_key_vault_key"
-  suffixes      = ["vm-${count.index}"]
-  prefixes      = [var.tenant-short-name]
+  name          = "${var.project-name}-adsync"
+  prefixes      = var.resource-prefixes
+  suffixes      = concat(["vm-${count.index}"], var.resource-suffixes)
 }
 
 resource "azurerm_key_vault_key" "vm-ade-key-adsync" {
@@ -50,7 +51,7 @@ module "adsync-vm" {
   resource-group-name = azurerm_resource_group.adsync-resource-group.name
   location            = var.location
   project-name        = "adsync"
-  resource-prefixes   = [var.tenant-short-name]
+  resource-prefixes   = var.resource-prefixes
   subnet-id           = module.identity-subnet.subnet-id
   ip-address          = cidrhost(module.identity-subnet.address-prefixes[0], (count.index + 7)) # Note: the first 3 IPs are reserved by Azure. So starting at 4.
 

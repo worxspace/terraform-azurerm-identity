@@ -3,8 +3,9 @@ resource "azurecaf_name" "identity-name" {
     "azurerm_resource_group",
     "azurerm_key_vault"
   ]
-  name     = "identity"
-  prefixes = [var.tenant-short-name]
+  name     = var.project-name
+  prefixes = var.resource-prefixes
+  suffixes = var.resource-suffixes
 }
 
 resource "azurerm_resource_group" "identity-resource-group" {

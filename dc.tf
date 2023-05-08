@@ -1,7 +1,8 @@
 resource "azurecaf_name" "adds-resource-group-name" {
   resource_type = "azurerm_resource_group"
-  name          = "adds"
-  prefixes      = [var.tenant-short-name]
+  name          = "${var.project-name}-adds"
+  prefixes      = var.resource-prefixes
+  suffixes      = var.resource-suffixes
 }
 
 resource "azurerm_resource_group" "adds-resource-group" {
@@ -50,7 +51,7 @@ module "adds-vm" {
   resource-group-name = azurerm_resource_group.adds-resource-group.name
   location            = var.location
   project-name        = "adds"
-  resource-prefixes   = [var.tenant-short-name]
+  resource-prefixes   = var.resource-prefixes
   resource-suffixes   = [count.index]
   subnet-id           = module.identity-subnet.subnet-id
   ip-address          = cidrhost(module.identity-subnet.address-prefixes[0], (count.index + 4)) # Note: the first 3 IPs are reserved by Azure. So starting at 4.
