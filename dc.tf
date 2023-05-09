@@ -13,10 +13,11 @@ resource "azurerm_resource_group" "adds-resource-group" {
 resource "azurecaf_name" "vm-ade-key-adds" {
   count = var.domain-controller == null ? 0 : var.domain-controller.high-availability == true ? 2 : 1
 
-  name          = "adds"
   resource_type = "azurerm_key_vault_key"
-  suffixes      = ["vm-${count.index}"]
-  prefixes      = [var.tenant-short-name]
+
+  name     = "adds"
+  prefixes = var.resource-prefixes
+  suffixes = concat(["vm-${count.index}"], var.resource-suffixes)
 }
 
 resource "azurerm_key_vault_key" "vm-ade-key-adds" {

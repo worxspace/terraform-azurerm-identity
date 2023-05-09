@@ -1,10 +1,5 @@
 data "azurerm_client_config" "current" {}
 
-variable "resource-group-name" {
-  description = "resource group where you want to create the virtual machines"
-  type        = string
-}
-
 variable "location" {
   type        = string
   default     = "switzerlandnorth"
@@ -46,6 +41,7 @@ variable "address-space" {
 
 variable "firewall-ip" {
   type = string
+  default = null
   description = "ip address of the firewall used for forward subnet traffic to the internet"
 }
 

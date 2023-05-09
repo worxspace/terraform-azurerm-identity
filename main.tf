@@ -8,7 +8,7 @@
  */
 
 module "landingzone" {
-  source = "github.com/worxspace/tfm-azure-landingzone?ref=0.0.2"
+  source = "github.com/worxspace/tfm-azure-landingzone?ref=0.0.4"
 
   project-name       = var.project-name
   resource-prefixes  = var.resource-prefixes
@@ -20,14 +20,15 @@ module "landingzone" {
 }
 
 module "identity-subnet" {
-  source = "github.com/worxspace/tfm-azure-subnet?ref=0.0.2"
+  source = "github.com/worxspace/tfm-azure-subnet?ref=0.0.4"
 
-  name                = "identity"
-  tenant-short-name   = var.tenant-short-name
+  project-name        = "identity"
+  resource-prefixes   = var.resource-prefixes
+  resource-suffixes   = var.resource-suffixes
   resource-group-name = module.landingzone.vnet-resource-group-name
   location            = var.location
   vnet-name           = module.landingzone.vnet-name
-  address-space       = var.address-space[0]
+  address-prefix      = var.address-space[0]
   firewall-ip         = var.firewall-ip
 }
 
