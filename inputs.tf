@@ -25,15 +25,6 @@ variable "resource-suffixes" {
   default = []
 }
 
-variable "hub-vnet" {
-  type = object({
-    name                = string
-    resource-group-name = string
-    id                  = string
-  })
-  description = "attributes identifying the hub virtual network"
-}
-
 variable "address-space" {
   type = list(string)
   description = "address space of the virtual network for this landing zone"

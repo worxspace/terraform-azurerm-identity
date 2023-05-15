@@ -14,7 +14,6 @@ module "landingzone" {
   resource-prefixes  = var.resource-prefixes
   resource-suffixes  = var.resource-suffixes
   location           = var.location
-  hub-vnet           = var.hub-vnet
   vnet-address-space = var.address-space
   firewall-ip        = var.firewall-ip
 }
@@ -34,12 +33,5 @@ module "identity-subnet" {
 
 resource "azurerm_virtual_network_dns_servers" "identity-dns" {
   virtual_network_id = module.landingzone.vnet-id
-  dns_servers        = module.adds-vm[*].ip-address
-}
-
-resource "azurerm_virtual_network_dns_servers" "hub-dns" {
-  provider = azurerm.Connectivity
-
-  virtual_network_id = var.hub-vnet.id
   dns_servers        = module.adds-vm[*].ip-address
 }
