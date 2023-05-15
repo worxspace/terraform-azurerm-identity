@@ -8,7 +8,7 @@
  */
 
 module "landingzone" {
-  source = "github.com/worxspace/tfm-azure-landingzone?ref=0.0.4"
+  source = "github.com/worxspace/tfm-azure-landingzone?ref=0.0.5"
 
   project-name       = var.project-name
   resource-prefixes  = var.resource-prefixes
@@ -19,7 +19,7 @@ module "landingzone" {
 }
 
 module "identity-subnet" {
-  source = "github.com/worxspace/tfm-azure-subnet?ref=0.0.4"
+  source = "github.com/worxspace/tfm-azure-subnet?ref=0.0.5"
 
   project-name        = "identity"
   resource-prefixes   = var.resource-prefixes
