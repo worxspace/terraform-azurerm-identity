@@ -43,7 +43,9 @@ resource "azurerm_key_vault_key" "vm-ade-key-adds" {
 }
 
 module "adds-vm" {
-  source = "github.com/worxspace/tfm-azure-vm-windows?ref=v0.3"
+  source  = "app.terraform.io/worxspace/vm-windows/azurerm"
+  version = "~>0.0.5"
+
   depends_on = [
     azurerm_role_assignment.identity-key-vault-current-officer
   ]

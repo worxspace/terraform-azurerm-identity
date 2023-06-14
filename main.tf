@@ -8,7 +8,8 @@
  */
 
 module "landingzone" {
-  source = "github.com/worxspace/tfm-azure-landingzone?ref=0.0.5"
+  source  = "app.terraform.io/worxspace/landingzone/azurerm"
+  version = "~>0.0.6"
 
   project-name       = var.project-name
   resource-prefixes  = var.resource-prefixes
@@ -19,7 +20,8 @@ module "landingzone" {
 }
 
 module "identity-subnet" {
-  source = "github.com/worxspace/tfm-azure-subnet?ref=0.0.5"
+  source  = "app.terraform.io/worxspace/subnet/azurerm"
+  version = "~>0.0.5"
 
   project-name        = "identity"
   resource-prefixes   = var.resource-prefixes
