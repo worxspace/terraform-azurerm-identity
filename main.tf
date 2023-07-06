@@ -9,7 +9,7 @@
 
 module "landingzone" {
   source  = "app.terraform.io/worxspace/landingzone/azurerm"
-  version = "~>0.0.6"
+  version = "0.0.6"
 
   project-name       = var.project-name
   resource-prefixes  = var.resource-prefixes
