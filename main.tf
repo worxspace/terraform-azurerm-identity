@@ -21,7 +21,7 @@ module "landingzone" {
 
 module "identity-subnet" {
   source  = "app.terraform.io/worxspace/subnet/azurerm"
-  version = "~>0.0.5"
+  version = "0.0.5"
 
   project-name        = "identity"
   resource-prefixes   = var.resource-prefixes
