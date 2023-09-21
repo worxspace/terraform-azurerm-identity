@@ -41,14 +41,15 @@ resource "azurerm_key_vault_key" "vm-ade-key-adsync" {
   ]
 }
 
-module "adsync-vm" {
+module "adsync-vm-marketplace" {
+  count = var.adsync == null && var.vm_source_image_id == null ? 1 : 0
+
   source  = "app.terraform.io/worxspace/vm-windows/azurerm"
-  version = "~>0.0.5"
+  version = "~>0.1.0"
 
   depends_on = [
     azurerm_role_assignment.identity-key-vault-current-officer
   ]
-  count = var.adsync == null ? 0 : 1
 
   resource-group-name = azurerm_resource_group.adsync-resource-group.name
   location            = var.location
@@ -57,13 +58,44 @@ module "adsync-vm" {
   subnet-id           = module.identity-subnet.subnet-id
   ip-address          = cidrhost(module.identity-subnet.address-prefixes[0], (count.index + 7)) # Note: the first 3 IPs are reserved by Azure. So starting at 4.
 
-  vm-size              = var.domain-controller.vm-size
-  support-hvic         = true
-  enable-azuread-login = false
+  vm-size                       = var.domain-controller.vm-size
+  support-hvic                  = false
+  update-management-integration = false
+  enable-azuread-login          = false
 
   disk-encryption = {
     key-vault-url            = azurerm_key_vault.identity-key-vault.vault_uri
     key-vault-encryption-url = azurerm_key_vault_key.vm-ade-key-adsync[count.index].id
     key-vault-resource-id    = azurerm_key_vault.identity-key-vault.id
   }
+}
+
+module "adsync-vm-gallery" {
+  count = var.adsync == null && var.vm_source_image_id != null ? 1 : 0
+
+  source  = "app.terraform.io/worxspace/vm-windows/azurerm"
+  version = "~>0.1.0"
+
+  depends_on = [
+    azurerm_role_assignment.identity-key-vault-current-officer
+  ]
+
+  resource-group-name = azurerm_resource_group.adsync-resource-group.name
+  location            = var.location
+  project-name        = "adsync"
+  resource-prefixes   = var.resource-prefixes
+  subnet-id           = module.identity-subnet.subnet-id
+  ip-address          = cidrhost(module.identity-subnet.address-prefixes[0], (count.index + 7)) # Note: the first 3 IPs are reserved by Azure. So starting at 4.
+
+  vm-size                       = var.domain-controller.vm-size
+  support-hvic                  = false
+  update-management-integration = false
+  enable-azuread-login          = false
+
+  disk-encryption = {
+    key-vault-url            = azurerm_key_vault.identity-key-vault.vault_uri
+    key-vault-encryption-url = azurerm_key_vault_key.vm-ade-key-adsync[count.index].id
+    key-vault-resource-id    = azurerm_key_vault.identity-key-vault.id
+  }
+  source-image-id = var.vm_source_image_id
 }

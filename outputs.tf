@@ -1,5 +1,5 @@
 output "dns-servers" {
-  value = module.adds-vm[*].ip-address
+  value = var.vm_source_image_id == null ? module.adds-vm-marketplace[*].ip-address : module.adds-vm-gallery[*].ip-address
   description = "DNS servers IP addresses"
 }
 

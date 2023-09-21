@@ -35,5 +35,5 @@ module "identity-subnet" {
 
 resource "azurerm_virtual_network_dns_servers" "identity-dns" {
   virtual_network_id = module.landingzone.vnet-id
-  dns_servers        = module.adds-vm[*].ip-address
+  dns_servers        = var.vm_source_image_id == null ? module.adds-vm-marketplace[*].ip-address : module.adds-vm-gallery[*].ip-address
 }

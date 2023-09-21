@@ -42,14 +42,14 @@ resource "azurerm_key_vault_key" "vm-ade-key-adds" {
   ]
 }
 
-module "adds-vm" {
+module "adds-vm-marketplace" {
   source  = "app.terraform.io/worxspace/vm-windows/azurerm"
-  version = "~>0.0.5"
+  version = "~>0.1.0"
 
   depends_on = [
     azurerm_role_assignment.identity-key-vault-current-officer
   ]
-  count = var.domain-controller == null ? 0 : var.domain-controller.high-availability == true ? 2 : 1
+  count = var.vm_source_image_id == null && var.domain-controller == null ? 0 : var.domain-controller.high-availability == true ? 2 : 1
 
   resource-group-name = azurerm_resource_group.adds-resource-group.name
   location            = var.location
@@ -60,8 +60,9 @@ module "adds-vm" {
   ip-address          = cidrhost(module.identity-subnet.address-prefixes[0], (count.index + 4)) # Note: the first 3 IPs are reserved by Azure. So starting at 4.
 
   vm-size              = var.domain-controller.vm-size
-  support-hvic         = true
-  enable-azuread-login = false
+  support-hvic                  = false
+  update-management-integration = false
+  enable-azuread-login          = false
 
   data-disks = [{
     name         = "addata"
@@ -75,4 +76,42 @@ module "adds-vm" {
     key-vault-encryption-url = azurerm_key_vault_key.vm-ade-key-adds[count.index].id
     key-vault-resource-id    = azurerm_key_vault.identity-key-vault.id
   }
+}
+
+module "adds-vm-gallery" {
+  source  = "app.terraform.io/worxspace/vm-windows/azurerm"
+  version = "~>0.1.0"
+
+  depends_on = [
+    azurerm_role_assignment.identity-key-vault-current-officer
+  ]
+  count = var.vm_source_image_id != null && var.domain-controller == null ? 0 : var.domain-controller.high-availability == true ? 2 : 1
+
+  resource-group-name = azurerm_resource_group.adds-resource-group.name
+  location            = var.location
+  project-name        = "adds"
+  resource-prefixes   = var.resource-prefixes
+  resource-suffixes   = [count.index]
+  subnet-id           = module.identity-subnet.subnet-id
+  ip-address          = cidrhost(module.identity-subnet.address-prefixes[0], (count.index + 4)) # Note: the first 3 IPs are reserved by Azure. So starting at 4.
+
+  vm-size              = var.domain-controller.vm-size
+  support-hvic                  = false
+  update-management-integration = false
+  enable-azuread-login          = false
+
+  data-disks = [{
+    name         = "addata"
+    size-gb      = 10
+    storage-type = "Premium_LRS"
+    tier         = "P3"
+  }]
+
+  disk-encryption = {
+    key-vault-url            = azurerm_key_vault.identity-key-vault.vault_uri
+    key-vault-encryption-url = azurerm_key_vault_key.vm-ade-key-adds[count.index].id
+    key-vault-resource-id    = azurerm_key_vault.identity-key-vault.id
+  }
+
+  source-image-id               = var.vm_source_image_id
 }

@@ -52,3 +52,9 @@ variable "adsync" {
   default = null
   description = "attributes for the adsync virtual machine"
 }
+
+variable vm_source_image_id {
+  type = string
+  default = null
+  description = "defines the custom gallery image to be used for deploying identity vms"
+}
