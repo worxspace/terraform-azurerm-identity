@@ -1,4 +1,6 @@
 resource "azurecaf_name" "adsync-resource-group-name" {
+  count = var.adsync == null ? 0 : 1
+
   resource_type = "azurerm_resource_group"
   name          = "${var.project-name}-adsync"
   prefixes      = var.resource-prefixes
@@ -6,7 +8,9 @@ resource "azurecaf_name" "adsync-resource-group-name" {
 }
 
 resource "azurerm_resource_group" "adsync-resource-group" {
-  name     = azurecaf_name.adsync-resource-group-name.result
+  count = var.adsync == null ? 0 : 1
+
+  name     = azurecaf_name.adsync-resource-group-name[0].result
   location = var.location
 }
 
@@ -42,7 +46,7 @@ resource "azurerm_key_vault_key" "vm-ade-key-adsync" {
 }
 
 module "adsync-vm-marketplace" {
-  count = var.adsync == null && var.vm_source_image_id == null ? 1 : 0
+  count = var.adsync != null && var.vm_source_image_id == null ? 1 : 0
 
   source  = "app.terraform.io/worxspace/vm-windows/azurerm"
   version = "~>0.1.0"
@@ -51,7 +55,7 @@ module "adsync-vm-marketplace" {
     azurerm_role_assignment.identity-key-vault-current-officer
   ]
 
-  resource-group-name = azurerm_resource_group.adsync-resource-group.name
+  resource-group-name = azurerm_resource_group.adsync-resource-group[0].name
   location            = var.location
   project-name        = "adsync"
   resource-prefixes   = var.resource-prefixes
@@ -71,7 +75,7 @@ module "adsync-vm-marketplace" {
 }
 
 module "adsync-vm-gallery" {
-  count = var.adsync == null && var.vm_source_image_id != null ? 1 : 0
+  count = var.adsync != null && var.vm_source_image_id != null ? 1 : 0
 
   source  = "app.terraform.io/worxspace/vm-windows/azurerm"
   version = "~>0.1.0"
@@ -80,7 +84,7 @@ module "adsync-vm-gallery" {
     azurerm_role_assignment.identity-key-vault-current-officer
   ]
 
-  resource-group-name = azurerm_resource_group.adsync-resource-group.name
+  resource-group-name = azurerm_resource_group.adsync-resource-group[0].name
   location            = var.location
   project-name        = "adsync"
   resource-prefixes   = var.resource-prefixes
@@ -97,5 +101,6 @@ module "adsync-vm-gallery" {
     key-vault-encryption-url = azurerm_key_vault_key.vm-ade-key-adsync[count.index].id
     key-vault-resource-id    = azurerm_key_vault.identity-key-vault.id
   }
-  source-image-id = var.vm_source_image_id
+  
+  source-image-id               = var.vm_source_image_id
 }
