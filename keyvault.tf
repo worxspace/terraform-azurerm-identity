@@ -5,7 +5,7 @@ resource "azurecaf_name" "identity-name" {
   ]
   name     = var.project-name
   prefixes = var.resource-prefixes
-  suffixes = var.resource-suffixes
+  suffixes = concat(var.resource-suffixes, ["001"])
 }
 
 resource "azurerm_resource_group" "identity-resource-group" {
@@ -25,7 +25,7 @@ resource "azurerm_key_vault" "identity-key-vault" {
 }
 
 resource "azurerm_role_assignment" "identity-key-vault-current-officer" {
-  scope                = azurerm_key_vault.identity-key-vault.id
-  principal_id         = data.azurerm_client_config.current.object_id
-  role_definition_name = "Key Vault Administrator"
+scope                = azurerm_key_vault.identity-key-vault.id
+principal_id         = data.azurerm_client_config.current.object_id
+role_definition_name = "Key Vault Administrator"
 }
