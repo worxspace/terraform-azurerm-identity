@@ -46,7 +46,7 @@ module "adds-vm-marketplace" {
   source  = "app.terraform.io/worxspace/vm-windows/azurerm"
   version = "~>0.1.0"
 
-  count = var.vm_source_image_id == null ? 0 : var.domain-controller == null ? 0 : var.domain-controller.high-availability == true ? 2 : 1
+  count = var.vm_source_image_id != null ? 0 : var.domain-controller == null ? 0 : var.domain-controller.high-availability == true ? 2 : 1
 
   resource-group-name = azurerm_resource_group.adds-resource-group.name
   location            = var.location
@@ -57,7 +57,7 @@ module "adds-vm-marketplace" {
   ip-address          = cidrhost(module.identity-subnet.address-prefixes[0], (count.index + 4)) # Note: the first 3 IPs are reserved by Azure. So starting at 4.
 
   vm-size                       = var.domain-controller.vm-size
-  support-hvic                  = false
+  support-hvic                  = var.domain-controller.vtpm-enabled
   update-management-integration = false
   enable-azuread-login          = false
 
@@ -90,7 +90,7 @@ module "adds-vm-gallery" {
   ip-address          = cidrhost(module.identity-subnet.address-prefixes[0], (count.index + 4)) # Note: the first 3 IPs are reserved by Azure. So starting at 4.
 
   vm-size                       = var.domain-controller.vm-size
-  support-hvic                  = false
+  support-hvic                  = var.domain-controller.vtpm-enabled
   update-management-integration = false
   enable-azuread-login          = false
 

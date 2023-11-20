@@ -40,6 +40,7 @@ variable "domain-controller" {
   type = object({
     vm-size           = optional(string, "Standard_D2s_V2")
     high-availability = optional(bool, true)
+    vtpm-enabled = optional(bool, true)
   })
   default = null
   description = "attributes for the domain controller virtual machines"
@@ -48,6 +49,7 @@ variable "domain-controller" {
 variable "adsync" {
   type = object({
     vm-size = optional(string, "Standard_B2s")
+    vtpm-enabled = optional(bool, true)
   })
   default = null
   description = "attributes for the adsync virtual machine"

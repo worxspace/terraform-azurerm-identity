@@ -59,8 +59,8 @@ module "adsync-vm-marketplace" {
   subnet-id           = module.identity-subnet.subnet-id
   ip-address          = cidrhost(module.identity-subnet.address-prefixes[0], (count.index + 7)) # Note: the first 3 IPs are reserved by Azure. So starting at 4.
 
-  vm-size                       = var.domain-controller.vm-size
-  support-hvic                  = false
+  vm-size                       = var.adsync.vm-size
+  support-hvic                  = var.adsync.vtpm-enabled
   update-management-integration = false
   enable-azuread-login          = false
 
@@ -85,8 +85,8 @@ module "adsync-vm-gallery" {
   subnet-id           = module.identity-subnet.subnet-id
   ip-address          = cidrhost(module.identity-subnet.address-prefixes[0], (count.index + 7)) # Note: the first 3 IPs are reserved by Azure. So starting at 4.
 
-  vm-size                       = var.domain-controller.vm-size
-  support-hvic                  = false
+  vm-size                       = var.adsync.vm-size
+  support-hvic                  = var.adsync.vtpm-enabled
   update-management-integration = false
   enable-azuread-login          = false
 
