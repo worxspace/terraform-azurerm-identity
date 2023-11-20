@@ -12,7 +12,7 @@ module "landingzone" {
   version = "0.0.6"
 
   project-name       = var.project-name
-  resource-prefixes  = var.resource-prefixes
+  resource-prefixes  = ["ams"]
   resource-suffixes  = var.resource-suffixes
   location           = var.location
   vnet-address-space = var.address-space
@@ -24,7 +24,7 @@ module "identity-subnet" {
   version = "0.0.5"
 
   project-name        = "identity"
-  resource-prefixes   = var.resource-prefixes
+  resource-prefixes   = ["ams"]
   resource-suffixes   = var.resource-suffixes
   resource-group-name = module.landingzone.vnet-resource-group-name
   location            = var.location

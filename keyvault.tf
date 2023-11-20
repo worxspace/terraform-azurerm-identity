@@ -1,15 +1,22 @@
 resource "azurecaf_name" "identity-name" {
   resource_types = [
-    "azurerm_resource_group",
     "azurerm_key_vault"
   ]
   name     = var.project-name
-  prefixes = var.resource-prefixes
+  prefixes = ["ams"]
+  suffixes = concat(var.resource-suffixes, ["001"])
+}
+
+resource "azurecaf_name" "identity-rg-name" {
+  resource_types = [
+    "azurerm_resource_group"
+  ]
+  name     = var.project-name
   suffixes = concat(var.resource-suffixes, ["001"])
 }
 
 resource "azurerm_resource_group" "identity-resource-group" {
-  name     = azurecaf_name.identity-name.results.azurerm_resource_group
+  name     = azurecaf_name.identity-rg-name.results.azurerm_resource_group
   location = var.location
 }
 
