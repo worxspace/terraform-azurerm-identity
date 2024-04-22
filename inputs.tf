@@ -26,13 +26,13 @@ variable "resource-suffixes" {
 }
 
 variable "address-space" {
-  type = list(string)
+  type        = list(string)
   description = "address space of the virtual network for this landing zone"
 }
 
 variable "firewall-ip" {
-  type = string
-  default = null
+  type        = string
+  default     = null
   description = "ip address of the firewall used for forward subnet traffic to the internet"
 }
 
@@ -40,23 +40,23 @@ variable "domain-controller" {
   type = object({
     vm-size           = optional(string, "Standard_D2s_V2")
     high-availability = optional(bool, true)
-    vtpm-enabled = optional(bool, true)
+    vtpm-enabled      = optional(bool, true)
   })
-  default = null
+  default     = null
   description = "attributes for the domain controller virtual machines"
 }
 
 variable "adsync" {
   type = object({
-    vm-size = optional(string, "Standard_B2s")
+    vm-size      = optional(string, "Standard_B2s")
     vtpm-enabled = optional(bool, true)
   })
-  default = null
+  default     = null
   description = "attributes for the adsync virtual machine"
 }
 
-variable vm_source_image_id {
-  type = string
-  default = null
+variable "vm_source_image_id" {
+  type        = string
+  default     = null
   description = "defines the custom gallery image to be used for deploying identity vms"
 }

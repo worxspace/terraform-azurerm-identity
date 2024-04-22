@@ -4,7 +4,7 @@ resource "azurecaf_name" "identity-name" {
     "azurerm_key_vault"
   ]
   name     = var.project-name
-  prefixes = var.resource-prefixes
+  prefixes = concat(var.resource-prefixes, [local.builtin_azure_backup_geo_codes[var.location]])
   suffixes = concat(var.resource-suffixes, ["001"])
 }
 

@@ -2,7 +2,7 @@ resource "azurecaf_name" "adsync-resource-group-name" {
   count = var.adsync == null ? 0 : 1
 
   resource_type = "azurerm_resource_group"
-  name          = "${var.project-name}-adsync"
+  name          = "${var.project-name}_adsync"
   prefixes      = var.resource-prefixes
   suffixes      = concat(var.resource-suffixes, ["001"])
 }
@@ -49,20 +49,23 @@ module "adsync-vm-marketplace" {
   count = var.adsync != null && var.vm_source_image_id == null ? 1 : 0
 
   source  = "app.terraform.io/worxspace/vm-windows/azurerm"
-  version = "~>0.1.0"
+  version = "~>1.0.0"
 
   resource-group-name = azurerm_resource_group.adsync-resource-group[0].name
   location            = var.location
   project-name        = "adsync"
   resource-prefixes   = var.resource-prefixes
-  resource-suffixes   = ["001"]
-  subnet-id           = module.identity-subnet.subnet-id
-  ip-address          = cidrhost(module.identity-subnet.address-prefixes[0], (count.index + 7)) # Note: the first 3 IPs are reserved by Azure. So starting at 4.
+  resource-suffixes   = var.resource-suffixes
+  machine-index       = 1
+  subnet-id           = module.landingzone.subnets["identity"].subnet-id
+  ip-address          = cidrhost(module.landingzone.subnets["identity"].address-prefixes[0], (count.index + 7)) # Note: the first 3 IPs are reserved by Azure. So starting at 4.
 
   vm-size                       = var.adsync.vm-size
   support-hvic                  = var.adsync.vtpm-enabled
   update-management-integration = false
   enable-azuread-login          = false
+  availability_set_id           = azurerm_availability_set.adds.id
+  os-disk-storage-type          = "StandardSSD_LRS"
 
   disk-encryption = {
     key-vault-url            = azurerm_key_vault.identity-key-vault.vault_uri
@@ -75,20 +78,23 @@ module "adsync-vm-gallery" {
   count = var.adsync != null && var.vm_source_image_id != null ? 1 : 0
 
   source  = "app.terraform.io/worxspace/vm-windows/azurerm"
-  version = "~>0.1.0"
+  version = "~>1.0.0"
 
   resource-group-name = azurerm_resource_group.adsync-resource-group[0].name
   location            = var.location
   project-name        = "adsync"
   resource-prefixes   = var.resource-prefixes
-  resource-suffixes   = ["001"]
-  subnet-id           = module.identity-subnet.subnet-id
-  ip-address          = cidrhost(module.identity-subnet.address-prefixes[0], (count.index + 7)) # Note: the first 3 IPs are reserved by Azure. So starting at 4.
+  resource-suffixes   = var.resource-suffixes
+  machine-index       = 1
+  subnet-id           = module.landingzone.subnets["identity"].subnet-id
+  ip-address          = cidrhost(module.landingzone.subnets["identity"].address-prefixes[0], (count.index + 7)) # Note: the first 3 IPs are reserved by Azure. So starting at 4.
 
   vm-size                       = var.adsync.vm-size
   support-hvic                  = var.adsync.vtpm-enabled
   update-management-integration = false
   enable-azuread-login          = false
+  availability_set_id           = azurerm_availability_set.adds.id
+  os-disk-storage-type          = "StandardSSD_LRS"
 
   disk-encryption = {
     key-vault-url            = azurerm_key_vault.identity-key-vault.vault_uri

@@ -9,7 +9,11 @@
 
 module "landingzone" {
   source  = "app.terraform.io/worxspace/landingzone/azurerm"
-  version = "0.0.6"
+  version = "~>0.0.6"
+
+  providers = {
+    azurerm.mi = azurerm.mi
+  }
 
   project-name       = var.project-name
   resource-prefixes  = var.resource-prefixes
@@ -17,20 +21,12 @@ module "landingzone" {
   location           = var.location
   vnet-address-space = var.address-space
   firewall-ip        = var.firewall-ip
-}
-
-module "identity-subnet" {
-  source  = "app.terraform.io/worxspace/subnet/azurerm"
-  version = "0.0.5"
-
-  project-name        = "identity"
-  resource-prefixes   = var.resource-prefixes
-  resource-suffixes   = var.resource-suffixes
-  resource-group-name = module.landingzone.vnet-resource-group-name
-  location            = var.location
-  vnet-name           = module.landingzone.vnet-name
-  address-prefix      = var.address-space[0]
-  firewall-ip         = var.firewall-ip
+  subnets = [
+    {
+      name          = "identity"
+      address-space = var.address-space[0]
+    }
+  ]
 }
 
 resource "azurerm_virtual_network_dns_servers" "identity-dns" {
